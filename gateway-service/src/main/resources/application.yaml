@@ -1,0 +1,44 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins:
+                  - "http://localhost:4200"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - PATCH
+                  - OPTIONS
+                allowedHeaders:
+                  - "*"
+                allowCredentials: true
+
+          routes:
+            - id: ebank-service
+              uri: lb://EBANK-SERVICE
+              predicates:
+                - Path=/EBANK-SERVICE/**
+              filters:
+                - StripPrefix=1
+
+            - id: ebank-bot
+              uri: lb://EBANK-BOT
+              predicates:
+                - Path=/EBANK-BOT/**
+              filters:
+                - StripPrefix=1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,gateway
+  endpoint:
+    gateway:
+      access: unrestricted
